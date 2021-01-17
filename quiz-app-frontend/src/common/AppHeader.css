@@ -1,0 +1,38 @@
+.app-header{
+    position:fixed;
+    width: 100%;
+    background-color: rgb(212, 218, 193);
+    
+    
+}
+.app-title{
+    float: left;
+    padding-left: 20px;
+ 
+   
+}
+.app-title a{
+    font-size: 25px; 
+    text-decoration: none;
+    display: inline-block; 
+    line-height: 64px; 
+    color: rgb(19, 18, 19);
+}
+.app-title a:hover{
+  color: blue;
+}
+
+.app-menu {
+    float: right;
+    background-color:rgb(212, 218, 193);
+  }
+.app-menu > li {
+    padding: 0 20px;
+  }
+
+.app-menu > li > a {
+    padding: 0 20px;
+    margin: 0 -20px;
+    font-size: 20px;
+}
+  
