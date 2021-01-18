@@ -1,9 +1,10 @@
 import { notification } from 'antd';
 import Layout, { Content } from 'antd/lib/layout/layout';
 import { Component } from 'react';
-import {  Switch, withRouter } from 'react-router-dom';
+import {  Route, Switch, withRouter } from 'react-router-dom';
 import './App.css';
 import '../common/AppHeader';
+import Signup from '../user/signup/Signup';
 import AppHeader from '../common/AppHeader';
 
 class App extends Component{
@@ -33,7 +34,7 @@ class App extends Component{
           <div className="container">
             <Switch>
               
-              
+            <Route path="/signup" component={Signup}></Route>
               
             </Switch>
           </div>
