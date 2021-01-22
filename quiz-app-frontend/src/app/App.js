@@ -6,6 +6,7 @@ import './App.css';
 import '../common/AppHeader';
 import Signup from '../user/signup/Signup';
 import AppHeader from '../common/AppHeader';
+import Login from '../user/login/Login';
 
 class App extends Component{
   constructor(props){
@@ -15,11 +16,22 @@ class App extends Component{
       isAuthenticated:false
     }
 
+    this.handleLogin = this.handleLogin.bind(this);
+
     notification.config({
       placement:'top',
       top:100,
       duration:4
     })
+  }
+
+  handleLogin() {
+    notification.success({
+      message: 'Quiz App',
+      description: "Jesteś zalogowany.",
+    });
+    //this.loadCurrentUser();
+    this.props.history.push("/");
   }
 
 
@@ -33,7 +45,9 @@ class App extends Component{
         <Content className="app-content">
           <div className="container">
             <Switch>
-              
+
+            <Route path="/login" 
+                  render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>
             <Route path="/signup" component={Signup}></Route>
               
             </Switch>

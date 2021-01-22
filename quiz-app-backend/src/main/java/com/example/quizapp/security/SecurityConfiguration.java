@@ -1,19 +1,26 @@
 package com.example.quizapp.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
 import com.example.quizapp.model.User;
 
 @Configuration
 @EnableWebSecurity 
 @EnableGlobalMethodSecurity(prePostEnabled = true) 
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter { 
+	
+	
+	
+	@Autowired
+	RestAuthEntryPoint restAuthEntryPoint;
 
 	@Autowired
 	private SpringDataJpaUserDetailsService userDetailsService; 
@@ -24,10 +31,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.userDetailsService(this.userDetailsService)
 				.passwordEncoder(User.PASSWORD_ENCODER);
 	}
+	
+	@Bean(name=BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception { 
-		http
+		http.cors().and()
 			.authorizeRequests()
 			.antMatchers("/",
                 "/favicon.ico",
@@ -39,9 +52,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                  "/**/*.css",
                  "/**/*.js")
                  .permitAll()
+            .antMatchers("/api/**")
+            .permitAll()
 			.anyRequest().authenticated()
+			.and()
+	        .exceptionHandling()
+	        .authenticationEntryPoint(restAuthEntryPoint)
 				.and()
 			.csrf().disable();
 	}
+	
+	
 
 }

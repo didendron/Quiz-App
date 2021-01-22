@@ -1,10 +1,13 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
 import { Component } from "react";
 import './Signup.css';
 import { 
     NAME_MIN_LENGTH, NAME_MAX_LENGTH, 
+    PASSWORD_MIN_LENGTH,PASSWORD_MAX_LENGTH
     
 } from '../../common/constants';
+
+import  Api  from '../../api/Api';
 
 import { Link } from 'react-router-dom';
 
@@ -20,10 +23,16 @@ class Signup extends Component{
                 value:''
             }
         }
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.isFormInvalid = this.isFormInvalid.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
     }
+    
 
     render(){
         return(
+            
             <div className="signup-container">
                 <h1 className="signup-title">Rejestracja</h1>
                 <div className="signup-content">
@@ -58,6 +67,8 @@ class Signup extends Component{
                                 htmlType="submit" 
                                 size="large" 
                                 className="signup-button"
+                                disabled={this.isFormInvalid()}
+                                onClick={this.handleSubmit}
                                 >Zarejestruj się</Button>
                                 Jesteś zarejestrowany? <Link to="/login">Zaloguj się!</Link>
                         </Form.Item>
@@ -73,12 +84,30 @@ class Signup extends Component{
             return {
                 validateStatus: 'error',
                 errorMsg: `Nazwa za krótka (Minimum ${NAME_MIN_LENGTH} znaków.)`
-            }
+            };
         } else if (name.length > NAME_MAX_LENGTH) {
             return {
-                validationStatus: 'error',
+                validateStatus: 'error',
                 errorMsg: `Nazwa za długa (Maximum ${NAME_MAX_LENGTH} znaków.)`
-            }
+            };
+        } else {
+            return {
+                validateStatus: 'success',
+                errorMsg: null,
+              };            
+        }
+    }
+    validatePassword=(password)=>{
+        if(password.length < PASSWORD_MIN_LENGTH) {
+            return {
+                validateStatus: 'error',
+                errorMsg: `Hasło za krótkie (Minimum ${PASSWORD_MIN_LENGTH} znaków.)`
+            };
+        } else if (password.length > PASSWORD_MAX_LENGTH) {
+            return {
+                validateStatus: 'error',
+                errorMsg: `Hasło za długie (Maximum ${PASSWORD_MAX_LENGTH} znaków.)`
+            };
         } else {
             return {
                 validateStatus: 'success',
@@ -87,18 +116,48 @@ class Signup extends Component{
         }
     }
 
-    handleInputChange( event,validationName) {
+    handleInputChange( event,validationInput) {
     
         const inputName = event.target.name;        
         const inputValue = event.target.value;
         this.setState({
             [inputName] : {
                 value: inputValue,
-                ...validationName(inputValue)
+                ...validationInput(inputValue)
             }
         });
 
-    }        
+    }    
+    isFormInvalid() {
+        return !(this.state.name.validateStatus === 'success' &&
+            this.state.password.validateStatus === 'success'
+        );
+    }
+    
+    handleSubmit(event) {
+        
+        event.preventDefault();
+    
+        const signupRequest = {
+            name: this.state.name.value,
+            password: this.state.password.value
+        };
+        
+        Api.signup(signupRequest)
+        .then(response => {
+            notification.success({
+                message: 'Quiz App',
+                description: 'Rejestracja przebiegła pomyślnie.Zaloguj się',
+            });          
+            this.props.history.push("/login");
+        }).catch(error => {
+            notification.error({
+                message: 'Quiz App',
+                description: error.message || 'Błąd!Spróbuj ponownie'
+            });
+        });
+    }
+    
 }
 
 

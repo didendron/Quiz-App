@@ -32,7 +32,7 @@ class AppHeader extends Component{
         
         return(
             <Header className="app-header">
-                <div class="container">
+                <div className="container">
                     <div className="app-title" >
                         <Link to="/">Quiz App</Link>
                     </div>

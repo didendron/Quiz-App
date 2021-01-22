@@ -2,6 +2,8 @@ package com.example.quizapp.security;
 
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,12 +11,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.example.quizapp.model.User;
 import com.example.quizapp.repository.UserRepository;
 
-@Component
+@Service
 public class SpringDataJpaUserDetailsService implements UserDetailsService {
 
 	private final UserRepository repository;
@@ -25,14 +27,19 @@ public class SpringDataJpaUserDetailsService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-		User user = this.repository.findByName(name).orElseThrow(() ->
-        	new UsernameNotFoundException("User not found with name : " + name));
+	@Transactional
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		return  new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(),
-				user.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.getName().name())
-        ).collect(Collectors.toList()));
+		User user = this.repository.findByName(username).orElseThrow(() ->
+    	new UsernameNotFoundException("User not found with name : " + username));
+		
+		
+	
+	return  new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(),
+			user.getRoles().stream().map(role ->
+            new SimpleGrantedAuthority(role.getName().name())
+    ).collect(Collectors.toList()));
 	}
+	
 
 }
