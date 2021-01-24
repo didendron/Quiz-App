@@ -7,7 +7,7 @@ import {
     
 } from '../../common/constants';
 
-import  Api  from '../../api/Api';
+import  {signup}  from '../../api/Api';
 
 import { Link } from 'react-router-dom';
 
@@ -143,7 +143,7 @@ class Signup extends Component{
             password: this.state.password.value
         };
         
-        Api.signup(signupRequest)
+        signup(signupRequest)
         .then(response => {
             notification.success({
                 message: 'Quiz App',

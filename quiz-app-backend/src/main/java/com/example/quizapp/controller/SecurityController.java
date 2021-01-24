@@ -2,18 +2,24 @@ package com.example.quizapp.controller;
 
 import java.net.URI;
 import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.quizapp.api.ApiResponse;
+import com.example.quizapp.api.CurrentUserResponse;
+import com.example.quizapp.api.JwtTokenResponse;
 import com.example.quizapp.api.LoginRequest;
 import com.example.quizapp.api.SignupRequest;
 import com.example.quizapp.model.Role;
@@ -28,9 +36,11 @@ import com.example.quizapp.model.RoleName;
 import com.example.quizapp.model.User;
 import com.example.quizapp.repository.RoleRepository;
 import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.security.JWTUtils;
+import com.example.quizapp.security.MyUserPrincipal;
 
 
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:3000",allowedHeaders="*")
 @RestController
 @RequestMapping("/api")
 public class SecurityController {
@@ -46,10 +56,15 @@ public class SecurityController {
 	@Qualifier(BeanIds.AUTHENTICATION_MANAGER)
     AuthenticationManager authenticationManager;
 	
+	@Autowired
+	JWTUtils jwtUtils;
+
+	
 	
 
     @PostMapping(value="/login",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> authenticateUser( @Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser( @Valid @RequestBody LoginRequest loginRequest
+    		,HttpServletRequest request) {
     	
 
         Authentication authentication = authenticationManager.authenticate(
@@ -59,13 +74,13 @@ public class SecurityController {
                 )
         );
         
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
         
-    
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        String jwt = jwtUtils.generateJwtToken(authentication);
+       
         
-        return ResponseEntity.ok(new ApiResponse(true, "Logowanie przebiegło pomyślnie"));
+        return ResponseEntity.ok( new JwtTokenResponse(jwt));
     }
 	
     @PostMapping(value="/signup",consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -98,6 +113,25 @@ public class SecurityController {
 
         return ResponseEntity.created(location).body(new ApiResponse(true, "Rejestracja przebiegła pomyślnie"));
     }
+    
+    
+    @GetMapping(value="/currentuser")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal MyUserPrincipal principal) {
+    	
+    		System.out.println(principal.getUsername());
+    	    return ResponseEntity.ok(new CurrentUserResponse(principal.getUsername()));
+    
+    		
+    	
+    	
+    	
+    	//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    
+    
+   
+    
 
 
 }

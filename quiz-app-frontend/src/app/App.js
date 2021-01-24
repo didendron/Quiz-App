@@ -7,6 +7,7 @@ import '../common/AppHeader';
 import Signup from '../user/signup/Signup';
 import AppHeader from '../common/AppHeader';
 import Login from '../user/login/Login';
+import  {getCurrentUser}  from '../api/Api';
 
 class App extends Component{
   constructor(props){
@@ -17,9 +18,10 @@ class App extends Component{
     }
 
     this.handleLogin = this.handleLogin.bind(this);
+    this.loadCurrentUser = this.loadCurrentUser.bind(this);
 
     notification.config({
-      placement:'top',
+      placement:'topRight',
       top:100,
       duration:4
     })
@@ -30,9 +32,32 @@ class App extends Component{
       message: 'Quiz App',
       description: "Jesteś zalogowany.",
     });
-    //this.loadCurrentUser();
+    this.loadCurrentUser();
     this.props.history.push("/");
   }
+
+  componentDidMount(){
+    this.loadCurrentUser();
+  }
+
+  loadCurrentUser() {
+    
+    getCurrentUser()
+    .then(response => {
+      console.log(response.name);
+      this.setState({
+        currentUser: response,
+        isAuthenticated: true,
+        
+      });
+      console.log("currentUser: "+this.state.currentUser.name);
+    }).catch(error => {
+      this.setState({
+        isAuthenticated: false 
+      });
+
+    });
+  }l
 
 
   render(){

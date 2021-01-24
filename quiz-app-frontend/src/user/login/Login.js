@@ -2,7 +2,8 @@ import { Button, Input,Form, notification } from 'antd';
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css';
-import  Api  from '../../api/Api';
+import  {login}  from '../../api/Api';
+import { ACCESS_TOKEN } from '../../common/constants';
 
 import { UserAddOutlined,LockOutlined } from '@ant-design/icons';
 
@@ -27,25 +28,20 @@ class Login extends Component {
      
     handleSubmit =(values)=>  {
 
-        
-
-            
-
-        console.log(values.name);
-        console.log(values.password);
         //const loginRequest = Object.assign({}, values);
-        Api.login(values)
+        login(values)
         .then(response => {
+            localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+            console.log(response.accessToken);
             this.props.onLogin();
-            console.log(response.data.message);
             }).catch(error => {
-                if(error.response.status === 401) {
+                if(error.status === 401) {
                     notification.error({
                         message: 'Quiz App',
                         description: 'Nazwa uzytkownika lub hasło nieprawidłowe.Spróbuj ponownie!'
                     });                    
                 } else {
-                    console.log('response: ', error.response.data);
+                    console.log('response: ', error.data);
                     notification.error({
                         message: 'Quiz App',
                         description: error.message || 'Błąd!'

@@ -1,11 +1,12 @@
 package com.example.quizapp.security;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,12 +34,13 @@ public class SpringDataJpaUserDetailsService implements UserDetailsService {
 		User user = this.repository.findByName(username).orElseThrow(() ->
     	new UsernameNotFoundException("User not found with name : " + username));
 		
+		List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
+        new SimpleGrantedAuthority(role.getName().name())
+				).collect(Collectors.toList());
+		
 		
 	
-	return  new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(),
-			user.getRoles().stream().map(role ->
-            new SimpleGrantedAuthority(role.getName().name())
-    ).collect(Collectors.toList()));
+	return  new MyUserPrincipal(user,authorities);
 	}
 	
 

@@ -10,6 +10,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.example.quizapp.model.User;
 
 @Configuration
@@ -24,6 +27,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private SpringDataJpaUserDetailsService userDetailsService; 
+	
+	@Bean
+	public AuthTokenFilter authenticationJwtTokenFilter() {
+		return new AuthTokenFilter();
+	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -41,6 +49,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception { 
 		http.cors().and()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
 			.authorizeRequests()
 			.antMatchers("/",
                 "/favicon.ico",
@@ -60,8 +71,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	        .authenticationEntryPoint(restAuthEntryPoint)
 				.and()
 			.csrf().disable();
+		
+		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 	
-	
+
 
 }
