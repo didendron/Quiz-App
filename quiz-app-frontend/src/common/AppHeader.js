@@ -8,16 +8,36 @@ import './AppHeader.css';
 
 class AppHeader extends Component{
     
-    // eslint-disable-next-line no-useless-constructor
+
     constructor(props){
         super(props);
 
+        this.handleMenuClick = this.handleMenuClick.bind(this); 
+
+    }
+
+    handleMenuClick({key}){
+        if(key==="logout"){
+            this.props.onLogout();
+        }
     }
 
     render(){
         let menuItems;
+        if(this.props.currentUser){
+            menuItems = [
+                <Menu.Item key="/new">
+                  <Link to="/new">Nowy Quiz</Link>
+                </Menu.Item>,
+                <Menu.Item key="logout" className="logout">
+                  Wyloguj się
+                </Menu.Item>, 
+                <Menu.Item key="user" className="user" >
+                    @{this.props.currentUser}
+                </Menu.Item>                
+              ]; 
 
-        
+        }else{
             menuItems = [
                 <Menu.Item key="/new">
                   <Link to="/new">Nowy Quiz</Link>
@@ -28,7 +48,10 @@ class AppHeader extends Component{
                 <Menu.Item key="/signup">
                   <Link to="/signup">Rejestracja</Link>
                 </Menu.Item>                  
-              ];
+              ]; 
+        }
+        
+           
         
         return(
             <Header className="app-header">
@@ -36,7 +59,7 @@ class AppHeader extends Component{
                     <div className="app-title" >
                         <Link to="/">Quiz App</Link>
                     </div>
-                     <Menu className="app-menu"
+                     <Menu onClick={this.handleMenuClick} className="app-menu"
                         mode="horizontal"
                         selectedKeys={[this.props.location.pathname]}
                         style={{ lineHeight: '64px' }}>

@@ -8,6 +8,7 @@ import Signup from '../user/signup/Signup';
 import AppHeader from '../common/AppHeader';
 import Login from '../user/login/Login';
 import  {getCurrentUser}  from '../api/Api';
+import { ACCESS_TOKEN } from '../common/constants';
 
 class App extends Component{
   constructor(props){
@@ -18,6 +19,7 @@ class App extends Component{
     }
 
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
     this.loadCurrentUser = this.loadCurrentUser.bind(this);
 
     notification.config({
@@ -36,6 +38,23 @@ class App extends Component{
     this.props.history.push("/");
   }
 
+  handleLogout() {
+    localStorage.removeItem(ACCESS_TOKEN)
+    this.setState({
+      isAuthenticated:false,
+      currentUser:null
+
+    })
+
+    this.props.history.push("/");
+    notification.success({
+          message: 'Quiz App',
+          description: "Jesteś wylogowany.",
+    });
+
+  }
+
+
   componentDidMount(){
     this.loadCurrentUser();
   }
@@ -46,11 +65,11 @@ class App extends Component{
     .then(response => {
       console.log(response.name);
       this.setState({
-        currentUser: response,
+        currentUser: response.name,
         isAuthenticated: true,
         
       });
-      console.log("currentUser: "+this.state.currentUser.name);
+      console.log("currentUser: "+this.state.currentUser);
     }).catch(error => {
       this.setState({
         isAuthenticated: false 
@@ -64,7 +83,8 @@ class App extends Component{
     return(
       <Layout className="app-container">
         <AppHeader isAuthenticated={this.state.isAuthenticated}
-        currentUser={this.state.currentUser}/>
+        currentUser={this.state.currentUser}
+        onLogout={this.handleLogout}/>
 
 
         <Content className="app-content">

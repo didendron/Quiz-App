@@ -1,6 +1,5 @@
 package com.example.quizapp.controller;
 
-import java.net.URI;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.example.quizapp.api.ApiResponse;
 import com.example.quizapp.api.CurrentUserResponse;
 import com.example.quizapp.api.JwtTokenResponse;
@@ -107,13 +104,11 @@ public class SecurityController {
         user.setRoles(Collections.singleton(userRole));
 
         User result = userRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/users/{name}")
-                .buildAndExpand(result.getName()).toUri();
         
+        System.out.println(result.getName());
 
-        return ResponseEntity.created(location).body(new ApiResponse(true, "Rejestracja przebiegła pomyślnie"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(true, "Rejestracja przebiegła pomyślnie"));
     }
     
     
