@@ -7,7 +7,7 @@ import {
     
 } from '../../common/constants';
 
-import  {signup}  from '../../api/Api';
+import  {signup, validatNameAvailability,validatePasswordAvailability}  from '../../api/Api';
 
 import { Link } from 'react-router-dom';
 
@@ -24,6 +24,8 @@ class Signup extends Component{
             }
         }
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.checkNameAvailability=this.checkNameAvailability.bind(this);
+        this.checkPasswordAvailability=this.checkPasswordAvailability.bind(this);
         this.isFormInvalid = this.isFormInvalid.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -46,20 +48,22 @@ class Signup extends Component{
                                 name="name"
                                 autoComplete="off"
                                 placeholder="Twoja nazwa użytkownika"
-                                value={this.state.name.value} 
+                                value={this.state.name.value}
+                                onBlur={this.checkNameAvailability} 
                                 onChange={(event) => this.handleInputChange(event, this.validateName)} /> 
                         </Form.Item>
                         <Form.Item 
                             label="Hasło"
                             validateStatus={this.state.password.validateStatus}
-                            help={this.state.password.errorMsg}>
+                            help={<label style={{paddingLeft:'85px'}}>{this.state.password.errorMsg}</label>}>
                             <Input 
                                 size="large"
                                 name="password" 
                                 type="password"
                                 autoComplete="off"
                                 placeholder="Hasło pomiędzy 6 a 20 znakami" 
-                                value={this.state.password.value} 
+                                value={this.state.password.value}
+                                onBlur={this.checkPasswordAvailability} 
                                 onChange={(event) => this.handleInputChange(event, this.validatePassword)} />    
                         </Form.Item>
                         <Form.Item>
@@ -128,6 +132,105 @@ class Signup extends Component{
         });
 
     }    
+
+    checkNameAvailability(){
+        const nameValue=this.state.name.value;
+        
+
+        if(this.validateName(nameValue).validateStatus==='error'){
+            this.setState({
+                name:{
+                    value:nameValue,
+                    ...this.validateName(nameValue)
+                }
+            })
+            return;
+        }
+        
+
+        validatNameAvailability(nameValue)
+        .then(response=>{
+            console.log(response.isAvailable);
+            if(response.isAvailable){
+                this.setState({
+                    name:{
+                        value:nameValue,
+                        validateStatus:'success',
+                        errorMsg:null
+                    }
+                })
+            }else{
+                this.setState({
+                    name:{
+                        value:nameValue,
+                        validateStatus:'error',
+                        errorMsg:'Nazwa użytkownika już istnieje'
+                    }
+                })
+            }
+            
+        }).catch(response=>{
+            this.setState({
+                name:{
+                    value:nameValue,
+                    validateStatus:'success',
+                    errorMsg:null
+                }
+            })
+        })
+
+
+    }
+
+    checkPasswordAvailability(){
+        const passwordValue=this.state.password.value;
+
+        if(this.validatePassword(passwordValue).validateStatus==='error'){
+            this.setState({
+                password:{
+                    value:passwordValue,
+                    ...this.validatePassword(passwordValue)
+                }
+            })
+            return;
+        }
+
+        validatePasswordAvailability(passwordValue)
+        .then(response=>{
+            if(response.isAvailable){
+                this.setState({
+                    password:{
+                        value:passwordValue,
+                        validateStatus:'success',
+                        errorMsg:null
+                    }
+                })
+            }else{
+                this.setState({
+                    password:{
+                        value:passwordValue,
+                        validateStatus:'error',
+                        errorMsg:'Hasło już istnieje'
+                    }
+                })
+            }
+            
+        }).catch(response=>{
+            this.setState({
+                password:{
+                    value:passwordValue,
+                    validateStatus:'success',
+                    errorMsg:null
+                }
+            })
+        })
+
+        
+    }
+
+
+
+
     isFormInvalid() {
         return !(this.state.name.validateStatus === 'success' &&
             this.state.password.validateStatus === 'success'

@@ -48,3 +48,17 @@ export function getCurrentUser() {
         method: 'GET'             
     });
 }
+
+export function validatNameAvailability(name) {
+    return request({
+        url: 'http://localhost:8080/quizapp/api/username?name='+name,
+        method: 'GET'             
+    });
+}
+
+export function validatePasswordAvailability(password) {
+    return request({
+        url: 'http://localhost:8080/quizapp/api/userpassword?password='+password,
+        method: 'GET'             
+    });
+}

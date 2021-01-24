@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +33,7 @@ import com.example.quizapp.api.CurrentUserResponse;
 import com.example.quizapp.api.JwtTokenResponse;
 import com.example.quizapp.api.LoginRequest;
 import com.example.quizapp.api.SignupRequest;
+import com.example.quizapp.api.UserAvailability;
 import com.example.quizapp.model.Role;
 import com.example.quizapp.model.RoleName;
 import com.example.quizapp.model.User;
@@ -86,6 +89,14 @@ public class SecurityController {
     @PostMapping(value="/signup",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         
+    	if(userRepository.existsByName(signUpRequest.getName())) {
+    		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Nazwa użytkownika już istnieje"));
+    	}
+    	
+    	if(userRepository.existsByPassword(signUpRequest.getPassword())) {
+    		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Hasło już istnieje"));
+    	}
+    	
         User user = new User(signUpRequest.getName(), signUpRequest.getPassword());
 
         user.setPassword(user.getPassword());
@@ -101,15 +112,6 @@ public class SecurityController {
                 .fromCurrentContextPath().path("/users/{name}")
                 .buildAndExpand(result.getName()).toUri();
         
-    
-        
-       // HttpHeaders responseHeaders = new HttpHeaders();
-       // responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-        //responseHeaders.add("Access-Control-Allow-Origin", "*");
-        //responseHeaders.add("Access-Control-Allow-Methods", "POST, GET");
-        //responseHeaders.add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        
-        //return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Rejestracja przebiegła pomyślnie"), responseHeaders, HttpStatus.OK);
 
         return ResponseEntity.created(location).body(new ApiResponse(true, "Rejestracja przebiegła pomyślnie"));
     }
@@ -122,12 +124,33 @@ public class SecurityController {
     		System.out.println(principal.getUsername());
     	    return ResponseEntity.ok(new CurrentUserResponse(principal.getUsername()));
     
-    		
-    	
-    	
-    	
-    	//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
+    
+    @GetMapping(value="/username")
+    public ResponseEntity<?> checkNameAvailability(@RequestParam(value="name") String name) {
+    	
+    	if(userRepository.existsByName(name)) {
+    		return ResponseEntity.ok(new UserAvailability(false));
+    	}
+    	  
+    	return ResponseEntity.ok(new UserAvailability(true));
+    
+    }
+    
+    @GetMapping(value="/userpassword")
+    public ResponseEntity<?> checkPasswordAvailability(@RequestParam(value="password") String password) {
+    	
+    	ControllerUtils controllerUtils=new ControllerUtils(this.userRepository);
+    	
+    	
+    	if(controllerUtils.checkPassAvailability(password)) {
+    		return ResponseEntity.ok(new UserAvailability(false));
+    	}
+    	  
+    	return ResponseEntity.ok(new UserAvailability(true));
+    
+    }
+    
     
     
    
