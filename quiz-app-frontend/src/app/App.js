@@ -9,6 +9,8 @@ import AppHeader from '../common/AppHeader';
 import Login from '../user/login/Login';
 import  {getCurrentUser}  from '../api/Api';
 import { ACCESS_TOKEN } from '../common/constants';
+import PrivateRoute from '../common/PrivateRoute';
+import NewQuiz from '../quiz/NewQuiz';
 
 class App extends Component{
   constructor(props){
@@ -94,6 +96,7 @@ class App extends Component{
             <Route path="/login" 
                   render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>
             <Route path="/signup" component={Signup}></Route>
+            <PrivateRoute authenticated={this.state.isAuthenticated} path="/new" component={NewQuiz} handleLogout={this.handleLogout}></PrivateRoute>
               
             </Switch>
           </div>

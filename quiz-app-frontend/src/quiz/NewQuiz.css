@@ -1,0 +1,35 @@
+.new-quiz-container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding-top: 90px;
+}
+
+.create-quiz-button{
+    width: 100%;
+}
+.create-quiz-button[disabled], .create-quiz-button[disabled]:hover, .create-quiz-button[disabled]:focus {
+    
+    opacity: 0.6;
+    color: #fff;
+    background-color: #ff1818;
+    border-color: #ff1818;
+}
+
+.form-row{
+    padding-top: 10px;
+}
+
+.line{
+    background-color:brown;
+}
+
+.dynamic-delete-button {
+
+    position: absolute;
+    top: 4px;
+    font-size: 35px;
+    color: #999;
+    
+}
+
+
