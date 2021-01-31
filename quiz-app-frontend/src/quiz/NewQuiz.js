@@ -1,5 +1,5 @@
 
-import { Button, Divider, Form, Input, Radio, Select } from "antd";
+import { Button, Divider, Form, Input, notification, Radio, Select } from "antd";
 import  {CloseOutlined, PlusOutlined } from '@ant-design/icons';
 
 import TextArea from "antd/lib/input/TextArea";
@@ -7,6 +7,7 @@ import TextArea from "antd/lib/input/TextArea";
 import { Component } from "react";
 import { QUIZ_CHOICE_MAX_LENGTH, QUIZ_MAX_CHOICES, QUIZ_NAME_MAX_LENGTH, QUIZ_QUESTION_MAX_LENGTH } from "../common/constants";
 import './NewQuiz.css';  
+import { createQuiz } from "../api/Api";
 
 
 
@@ -249,6 +250,27 @@ class NewQuiz extends Component{
 
 
     handleSubmit(event){
+        event.preventDefault();
+        const quizData={
+            quiz:this.state.quiz.text,
+            category:this.state.category.text,
+            questions:this.state.questions
+
+        }
+        console.log(JSON.stringify(quizData));
+        createQuiz(quizData)
+        .then(response => {
+            this.props.history.push("/");
+        }).catch(error => {
+            if(error.status === 401) {
+                this.props.handleLogout();    
+            } else {
+                notification.error({
+                    message: 'Quiz App',
+                    description: error.message || 'Błąd'
+                });              
+            }
+        });
 
     }
 
@@ -266,7 +288,7 @@ class NewQuiz extends Component{
             <div className="new-quiz-container">
                 <h1 className="title">Nowy Quiz</h1>
                 <div className="new-quiz-content">
-                    <Form onFinish={this.handleSubmit} className="new-quiz-form">
+                    <Form onSubmit={this.handleSubmit} className="new-quiz-form">
                         <Form.Item validateStatus={this.state.quiz.validateStatus}
                         help={this.state.quiz.errorMsg} className="form-row">
                             <TextArea
@@ -309,6 +331,7 @@ class NewQuiz extends Component{
                                 htmlType="submit" 
                                 size="large" 
                                 disabled={this.isFormInvalid()}
+                                onClick={this.handleSubmit}
                                 className="create-quiz-button">Utwórz quiz</Button>
                         </Form.Item>
                        
@@ -353,8 +376,8 @@ function QuizQuestion(props){
             
             {choiceViews}
             <Form.Item  className="form-row">
-                Właściwa odpowiedź:<Radio.Group onChange={(event)=>props.handleRadioChange(event,props.questionNumber)} 
-                defaultValue={1}>
+                Poprawna odpowiedź:<Radio.Group onChange={(event)=>props.handleRadioChange(event,props.questionNumber)} 
+                >
                     <Radio value={1}>Odp.1</Radio>
                     <Radio value={2}>Odp.2</Radio>
                     <Radio value={3}>Odp.3</Radio>

@@ -24,7 +24,7 @@ public class Choice {
     private String text;
 	
 	@NotNull
-	private Boolean isCorrect;
+	private boolean isCorrect;
 	
 	@ManyToOne
 	@JoinColumn(name = "question_id")

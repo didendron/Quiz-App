@@ -62,3 +62,18 @@ export function validatePasswordAvailability(password) {
         method: 'GET'             
     });
 }
+
+export function createQuiz(quizData) {
+    return request({
+        url: 'http://localhost:8080/quizapp/api/createquiz',
+        method: 'POST',
+        body: JSON.stringify(quizData)         
+    });
+}
+
+export function getQuizzes() {
+    return request({
+        url: 'http://localhost:8080/quizapp/api/getquiz',
+        method: 'GET'             
+    });
+}

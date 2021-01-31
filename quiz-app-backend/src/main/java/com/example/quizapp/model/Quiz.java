@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,11 +28,11 @@ public class Quiz {
     @Size(max = 140)
     private String title;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
-	@OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	private List<Question> questions=new ArrayList<>();
 	
 	public Quiz() {}

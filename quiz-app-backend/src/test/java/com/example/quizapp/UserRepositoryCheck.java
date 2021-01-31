@@ -15,7 +15,7 @@ public class UserRepositoryCheck {
 	@Autowired
 	UserRepository repository;
 	
-	//@Test
+	@Test
 	void checkName() {
 		User user = this.repository.findByName("wersjaj").orElseThrow(() ->
     	new UsernameNotFoundException("Błąd " ));
