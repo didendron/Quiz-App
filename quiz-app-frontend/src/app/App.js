@@ -11,18 +11,22 @@ import  {getCurrentUser}  from '../api/Api';
 import { ACCESS_TOKEN } from '../common/constants';
 import PrivateRoute from '../common/PrivateRoute';
 import NewQuiz from '../quiz/NewQuiz';
+import QuizList from '../quiz/QuizList';
+import Quiz from '../quiz/Quiz';
 
 class App extends Component{
   constructor(props){
     super(props);
     this.state={
       currentUser:null,
-      isAuthenticated:false
-    }
+      isAuthenticated:false,
+      
+   }
 
     this.handleLogin = this.handleLogin.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.loadCurrentUser = this.loadCurrentUser.bind(this);
+    
 
     notification.config({
       placement:'topRight',
@@ -78,7 +82,8 @@ class App extends Component{
       });
 
     });
-  }l
+  }
+  
 
 
   render(){
@@ -92,6 +97,11 @@ class App extends Component{
         <Content className="app-content">
           <div className="container">
             <Switch>
+            <Route exact path="/" 
+                  render={(props) => <QuizList  {...props} />}>
+            </Route>
+            <Route path="/quiz" 
+                  render={(props) => <Quiz  {...props} />}></Route>
 
             <Route path="/login" 
                   render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>

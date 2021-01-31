@@ -1,0 +1,30 @@
+.quiz-container{
+    max-width: 600px;
+    margin: 0 auto;    
+    padding-top: 100px; 
+}
+
+.quiz-view{
+    margin-bottom:20px;
+    text-align:center;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    
+}
+.quiz-view:hover{
+    background-color: rgb(87, 173, 207);
+}
+
+.avatar {
+    float: left;
+    margin-top: 3px;
+    margin-left: 12px;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 30px;  
+    font-size: 20px;  
+    
+}
+.avatar-title{
+    color:black;
+}

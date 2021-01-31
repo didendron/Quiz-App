@@ -19,6 +19,7 @@ import com.example.quizapp.api.ChoiceRequest;
 import com.example.quizapp.api.CorrectChoice;
 import com.example.quizapp.api.QuestionRequest;
 import com.example.quizapp.api.QuizDataRequest;
+import com.example.quizapp.api.QuizDataResponse;
 import com.example.quizapp.model.Category;
 import com.example.quizapp.model.Choice;
 import com.example.quizapp.model.Question;
@@ -123,7 +124,7 @@ public class QuizController {
 		});
 		
 		
-		return ResponseEntity.status(HttpStatus.OK).body(quizzesResponse);
+		return ResponseEntity.status(HttpStatus.OK).body(new QuizDataResponse(quizzesResponse));
 		
 	}
 
