@@ -50,7 +50,7 @@ class QuizList extends Component{
         });
 
         return(
-            <div className="quiz-container">
+            <div className="quizzes-container">
                 {quizViews}
 
             </div>
