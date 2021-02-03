@@ -69,7 +69,7 @@
 	<build>
 	
 		<plugins>
-		
+			
 		 	<plugin>
     			<artifactId>maven-antrun-plugin</artifactId>
     			<executions>
@@ -78,7 +78,7 @@
             			<configuration>
                				<target>
                     			<copy todir="${project.build.directory}/classes/public">
-                        			<fileset dir="${project.basedir}/../quiz-app-frontend/build"/>
+                        			<fileset dir="${project.basedir}/quiz-app-frontend/build"/>
                     			</copy>
                 			</target>
             			</configuration>
