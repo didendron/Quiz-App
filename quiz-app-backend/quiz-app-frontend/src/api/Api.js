@@ -28,7 +28,7 @@ const request = (options) => {
 };
 export function signup(signupRequest) {
     return request({
-        url: 'http://localhost:8080/api/signup',
+        url: '/api/signup',
         method: 'POST',
         body: JSON.stringify(signupRequest)         
     });
@@ -36,7 +36,7 @@ export function signup(signupRequest) {
 
 export function login(loginRequest) {
     return request({
-        url: 'http://localhost:8080/api/login',
+        url: '/api/login',
         method: 'POST',
         body: JSON.stringify(loginRequest)         
     });
@@ -44,28 +44,28 @@ export function login(loginRequest) {
 
 export function getCurrentUser() {
     return request({
-        url: 'http://localhost:8080/api/currentuser',
+        url: '/api/currentuser',
         method: 'GET'             
     });
 }
 
 export function validatNameAvailability(name) {
     return request({
-        url: 'http://localhost:8080/api/username?name='+name,
+        url: '/api/username?name='+name,
         method: 'GET'             
     });
 }
 
 export function validatePasswordAvailability(password) {
     return request({
-        url: 'http://localhost:8080/api/userpassword?password='+password,
+        url: '/api/userpassword?password='+password,
         method: 'GET'             
     });
 }
 
 export function createQuiz(quizData) {
     return request({
-        url: 'http://localhost:8080/api/createquiz',
+        url: '/api/createquiz',
         method: 'POST',
         body: JSON.stringify(quizData)         
     });
@@ -73,7 +73,7 @@ export function createQuiz(quizData) {
 
 export function getQuizzes() {
     return request({
-        url: 'http://localhost:8080/api/getquiz',
+        url: '/api/getquiz',
         method: 'GET'             
     });
 }
